@@ -1,5 +1,3 @@
-import { objectToList } from '../solution';
-
 test('objectToList', () => {
     expect(
         objectToList({
@@ -31,3 +29,14 @@ test('objectToList should not copy references', () => {
 
     expect(result[0].value).not.toBe(obj);
 });
+
+function objectToList(content) {
+    let _content = JSON.parse(JSON.stringify(content));
+    return Object.keys(_content)
+        .map((key) => {
+            return {
+                name: key,
+                value: _content[key]
+            };
+        });
+}

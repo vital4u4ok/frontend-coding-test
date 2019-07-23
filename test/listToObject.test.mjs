@@ -1,5 +1,3 @@
-import { listToObject } from '../solution';
-
 test('listToObject', () => {
     expect(
         listToObject([
@@ -34,3 +32,18 @@ test('listToObject should not copy references', () => {
 
     expect(result.foo).not.toBe(obj);
 });
+
+function listToObject(list) {
+    let newValue;
+    return list.reduce((obj, item) => {
+        if (item.value instanceof Array) {
+            newValue = [...item.value];
+        } else if (item.value instanceof Object) {
+            newValue = Object.assign({}, item.value);
+        } else {
+            newValue = item.value;
+        }
+        obj[item.name] = newValue;
+        return obj;
+    }, {});
+}

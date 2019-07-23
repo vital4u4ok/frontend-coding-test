@@ -1,4 +1,3 @@
-import { deserialize } from '../solution';
 
 test('deserialize', () => {
     expect(deserialize({
@@ -119,3 +118,44 @@ test('deserialize nested with any name pattern', () => {
         [propName]: 2,
     });
 });
+
+function deserialize(params){
+    const result = {};
+    for (let key in params) {
+        const value = params[key];
+
+        if (key.includes('_')) {
+            const data = key.split('_');
+            const rowKey = data[0].replace(/\d/, '');
+            const rowIndex = parseInt(data[0].match(/\d/, ''));
+            const rowProp = data[1];
+
+            // Check if row prop exist
+            if (!result[rowKey]) {
+                result[rowKey] = [];
+            }
+
+            // Check if object is defined
+            if (!result[rowKey][rowIndex]) {
+                result[rowKey][rowIndex] = {};
+            }
+
+            if (typeof value === 'object') {
+                result[rowKey][rowIndex][rowProp] = deserialize(value);
+            } else {
+                result[rowKey][rowIndex][rowProp] = formatValue(value);
+            }
+        } else {
+            result[key] = value;
+        }
+    }
+    return result;
+};
+
+function formatValue(value) {
+    if (typeof value === 'string' && value.includes('t:')) {
+        const d = new Date(parseInt(value.split(':')[1]));
+        return `${d.getDate()}/0${d.getMonth() + 1}/${d.getFullYear()}`;
+    }
+    return value;
+}
